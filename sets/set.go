@@ -165,31 +165,46 @@ func Intersection(A, B *Set) (C Set) {
 				C.Add(e)
 			}
 		}
-	} else {
-		for e := range B.E {
-			if A.Contains(e) {
-				C.Add(e)
-			}
+		return
+	}
+	for e := range B.E {
+		if A.Contains(e) {
+			C.Add(e)
 		}
 	}
 	return
 }
 
-// Difference
+// Difference creates a new set (C) fom elements only in A
 // −, ∖	set difference	elements in set A that are not in B
 // A={1,2,3,4}
 // B={2,3,5,8}
 // A−B={1,4}
 // B−A={5,8}
+func (A *Set) Difference(B *Set) (C Set) {
+	for e := range A.E {
+		if !B.Contains(e) {
+			C.Add(e)
+		}
+	}
+	return
+}
 
-// SymetricDifference
-
-// CartesianProduct
-// ×	Cartesian product	a set containing all possible combinations of one element from A and one element from B
-// A={1,2}
-// B={3,4}
-// A×B={(1,3),(2,3),(1,4),(2,4)}
-// B×A={(3,1),(3,2),(4,1),(4,2)}
+// SymetricDifferencec reates a new set (C) fom elements only in A AND elements only in B
+func (A *Set) SymetricDifferencec(B *Set) (C Set) {
+	//TODO add go routines to do both in parallel
+	for e := range A.E {
+		if !B.Contains(e) {
+			C.Add(e)
+		}
+	}
+	for e := range B.E {
+		if !A.Contains(e) {
+			C.Add(e)
+		}
+	}
+	return
+}
 
 // MappingFunction
 
@@ -202,3 +217,10 @@ func Intersection(A, B *Set) (C Set) {
 // SuchThat
 // :, ∣	such that	used to denote a condition, usually in set-builder notation or in a mathematical definition
 // {x2:x+3 is prime}
+
+// CartesianProduct
+// ×	Cartesian product	a set containing all possible combinations of one element from A and one element from B
+// A={1,2}
+// B={3,4}
+// A×B={(1,3),(2,3),(1,4),(2,4)}
+// B×A={(3,1),(3,2),(4,1),(4,2)}
