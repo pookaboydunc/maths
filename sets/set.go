@@ -146,7 +146,11 @@ func (A *Set) IsProperSuperset(B *Set) bool {
 // B={2,3,5}
 // A∪B={1,2,3,5}
 func (A *Set) Union(B *Set) (C Set) {
-	C.E = A.E
+	//TODO add go routines to do both in parallel
+	C = NewSet()
+	for e := range A.E {
+		C.Add(e)
+	}
 	for e := range B.E {
 		C.Add(e)
 	}
@@ -158,7 +162,9 @@ func (A *Set) Union(B *Set) (C Set) {
 // A={1,2}
 // B={2,3,5}
 // A∩B={2}
-func Intersection(A, B *Set) (C Set) {
+func (A *Set) Intersection(B *Set) (C Set) {
+	//TODO add go routines to do both in parallel
+	C = NewSet()
 	if A.Cardinality() < B.Cardinality() {
 		for e := range A.E {
 			if B.Contains(e) {
@@ -175,7 +181,7 @@ func Intersection(A, B *Set) (C Set) {
 	return
 }
 
-// Difference creates a new set (C) fom elements only in A
+// Difference creates a new set (C) from elements only in A
 // −, ∖	set difference	elements in set A that are not in B
 // A={1,2,3,4}
 // B={2,3,5,8}
@@ -190,7 +196,7 @@ func (A *Set) Difference(B *Set) (C Set) {
 	return
 }
 
-// SymetricDifferencec reates a new set (C) fom elements only in A AND elements only in B
+// SymetricDifferencec creates a new set (C) from elements in A only AND elements in B only
 func (A *Set) SymetricDifferencec(B *Set) (C Set) {
 	//TODO add go routines to do both in parallel
 	for e := range A.E {
@@ -206,13 +212,22 @@ func (A *Set) SymetricDifferencec(B *Set) (C Set) {
 	return
 }
 
-// MappingFunction
-
 // JaccardSimilarity
-// Jaccard Index = (the number in both sets) / (the number in either set) * 100
-
+// Jaccard Index = (the number in both sets) / (the number in either set)
+//
 // The same formula in notation is:
 // J(A,B) = |A∩B| / |A∪B|
+func JaccardSimilarity(A, B *Set) float64 {
+	D := A.Intersection(B)
+	U := A.Union(B)
+	return float64(D.Cardinality()) / float64(U.Cardinality())
+}
+
+// JaccardDistance
+// Jaccard distance = 1 - JaccardSimilarity
+func JaccardDistance(A, B *Set) float64 {
+	return 1 - JaccardSimilarity(A, B)
+}
 
 // SuchThat
 // :, ∣	such that	used to denote a condition, usually in set-builder notation or in a mathematical definition
@@ -224,3 +239,5 @@ func (A *Set) SymetricDifferencec(B *Set) (C Set) {
 // B={3,4}
 // A×B={(1,3),(2,3),(1,4),(2,4)}
 // B×A={(3,1),(3,2),(4,1),(4,2)}
+
+// MappingFunction

@@ -1,6 +1,7 @@
 package set
 
 import (
+	"math"
 	"testing"
 )
 
@@ -148,8 +149,10 @@ func Test_Union(t *testing.T) {
 		t.Errorf("C should have 5 elements. Instead it has a cardinality of %d", C.Cardinality())
 	}
 	for e := range C.E {
-		if !A.Contains(e) || !B.Contains(e) {
-			t.Errorf("C should contain element %v but it does not", e)
+		if !A.Contains(e) {
+			if !B.Contains(e) {
+				t.Errorf("C should contain element %v but it does not", e)
+			}
 		}
 	}
 }
@@ -181,5 +184,42 @@ func Test_IsProperSuperset(t *testing.T) {
 	C := B
 	if C.IsProperSuperset(&B) {
 		t.Error("Not expecting C to be a proper superset of B as they are the same.")
+	}
+}
+
+func Test_JaccardSimilarity(t *testing.T) {
+	A := NewSet([]interface{}{0, 1, 2, 5, 6, 8, 9}...)
+	B := NewSet([]interface{}{0, 2, 3, 4, 5, 7, 9}...)
+	index := JaccardSimilarity(&A, &B)
+	if index != 0.4 {
+		t.Errorf("expected a similarity index of 0.4 instead got %.2f", index)
+	}
+	C := NewSet([]interface{}{0, 1, 2, 3, 4, 5}...)
+	D := NewSet([]interface{}{6, 7, 8, 9, 10}...)
+	index2 := JaccardSimilarity(&C, &D)
+	if index2 != 0 {
+		t.Errorf("expected a similarity index of 0 instead got %.2f", index)
+	}
+	E := NewSet([]interface{}{"cat", "dog", "hippo", "monkey"}...)
+	F := NewSet([]interface{}{"monkey", "rhino", "ostrich", "salmon"}...)
+	index3 := JaccardSimilarity(&E, &F)
+	shouldBe := 0.14
+	tolerance := 0.01
+	if diff := math.Abs(index3 - shouldBe); diff > tolerance {
+		t.Errorf("expected a similarity index of 0.14 instead got %.6f", index3)
+	}
+}
+
+func Test_JaccardDistance(t *testing.T) {
+	A := NewSet([]interface{}{0, 1, 2, 5, 6, 8, 9}...)
+	B := NewSet([]interface{}{0, 2, 3, 4, 5, 7, 9}...)
+	index := JaccardSimilarity(&A, &B)
+	distance := JaccardDistance(&A, &B)
+	if index != 0.4 {
+		t.Errorf("expected a similarity index of 0.4 instead got %.2f", index)
+	}
+	if distance != 0.6 {
+		t.Errorf("expected a distance of 0.6 instead got %.2f", distance)
+		t.Log(index, distance)
 	}
 }
