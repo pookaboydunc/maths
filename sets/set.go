@@ -229,15 +229,24 @@ func JaccardDistance(A, B *Set) float64 {
 	return 1 - JaccardSimilarity(A, B)
 }
 
-// SuchThat
-// :, ∣	such that	used to denote a condition, usually in set-builder notation or in a mathematical definition
-// {x2:x+3 is prime}
-
 // CartesianProduct
 // ×	Cartesian product	a set containing all possible combinations of one element from A and one element from B
 // A={1,2}
 // B={3,4}
 // A×B={(1,3),(2,3),(1,4),(2,4)}
 // B×A={(3,1),(3,2),(4,1),(4,2)}
+
+// SuchThat
+// :, ∣	such that	used to denote a condition, usually in set-builder notation or in a mathematical definition
+// {x2:x+3 is prime}
+func SuchThat(condition func(x interface{}) bool, els ...interface{}) (A Set) {
+	A = NewSet()
+	for e := range els {
+		if condition(e) {
+			A.Add(e)
+		}
+	}
+	return
+}
 
 // MappingFunction

@@ -223,3 +223,19 @@ func Test_JaccardDistance(t *testing.T) {
 		t.Log(index, distance)
 	}
 }
+
+func Test_SuchThat(t *testing.T) {
+	els := []interface{}{1, 2, 3, 4, 5, 6, 7, 8, 9, 10}
+	condition := func(x interface{}) bool {
+		if x.(int)%2 == 0 {
+			return true
+		}
+		return false
+	}
+	A := SuchThat(condition, els...)
+	for e := range A.E {
+		if e.(int)%2 != 0 {
+			t.Errorf("Expecting all elements to be positive number yet found element %v", e)
+		}
+	}
+}
