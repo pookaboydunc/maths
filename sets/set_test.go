@@ -227,10 +227,7 @@ func Test_JaccardDistance(t *testing.T) {
 func Test_SuchThat(t *testing.T) {
 	els := []interface{}{1, 2, 3, 4, 5, 6, 7, 8, 9, 10}
 	condition := func(x interface{}) bool {
-		if x.(int)%2 == 0 {
-			return true
-		}
-		return false
+		return x.(int)%2 == 0
 	}
 	A := SuchThat(condition, els...)
 	for e := range A.E {
