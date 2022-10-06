@@ -6,8 +6,7 @@ import (
 )
 
 func Test_NewSet(t *testing.T) {
-	elements := []interface{}{1, 1, 2, 3, 4, 5}
-	A := NewSet(elements...)
+	A := NewSet(1, 1, 2, 3, 4, 5)
 	if A.Cardinality() != 5 {
 		t.Errorf("A should have 5 elements. Instead it has a cardinality of %d", A.Cardinality())
 	}
@@ -26,8 +25,7 @@ func Test_NewSet(t *testing.T) {
 }
 
 func Test_Contains(t *testing.T) {
-	elements := []interface{}{1, 1, 2, 3, 4, 5}
-	A := NewSet(elements...)
+	A := NewSet(1, 1, 2, 3, 4, 5)
 	if A.Cardinality() != 5 {
 		t.Errorf("A should have 5 elements. Instead it has a cardinality of %d", A.Cardinality())
 	}
@@ -46,62 +44,58 @@ func Test_Contains(t *testing.T) {
 }
 
 func Test_SubsetOf(t *testing.T) {
-	elements := []interface{}{1, 1, 2, 3, 4, 5}
-	A := NewSet(elements...)
+	A := NewSet(1, 1, 2, 3, 4, 5)
 	if A.Cardinality() != 5 {
 		t.Errorf("A should have 5 elements. Instead it has a cardinality of %d", A.Cardinality())
 	}
 	A.Remove(1)
-	B := NewSet(elements...)
+	B := NewSet(1, 1, 2, 3, 4, 5)
 	B.Remove(2, 3, 4)
-	C := Subset(&A, &B)
+	C := A.Subset(&B)
 	if C.Cardinality() != 1 {
 		t.Errorf("C has a cardinality of %d but was expecting a cardinality of %d", 1, C.Cardinality())
 	}
-	felements := []interface{}{5, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20}
-	D := NewSet(felements...)
-	F := Subset(&C, &D)
+	D := NewSet(5, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20)
+	F := C.Subset(&D)
 	if F.Cardinality() != 1 {
 		t.Errorf("F has a cardinality of %d but was expecting a cardinality of %d", 1, F.Cardinality())
 	}
 }
 
 func Test_IsSubset(t *testing.T) {
-	elements := []interface{}{1, 1, 2, 3, 4, 5}
-	A := NewSet(elements...)
+	A := NewSet(1, 1, 2, 3, 4, 5)
 	if A.Cardinality() != 5 {
 		t.Errorf("A should have 5 elements. Instead it has a cardinality of %d", A.Cardinality())
 	}
 	A.Remove(1)
-	B := NewSet(elements...)
+	B := NewSet(1, 1, 2, 3, 4, 5)
 	B.Remove(2, 3, 4)
-	C := Subset(&A, &B)
+	C := A.Subset(&B)
 	if C.Cardinality() != 1 {
 		t.Errorf("C has a cardinality of %d but was expecting a cardinality of %d", 1, C.Cardinality())
 	}
 	if !C.IsSubset(&A) {
 		t.Error("C should be a subset of Set A")
 	}
-	D := NewSet([]interface{}{"testing", true, nil}...)
+	D := NewSet("testing", true, nil)
 	if C.IsSubset(&D) {
 		t.Error("C should not be a subset of Set D")
 	}
-	E := NewSet([]interface{}{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12}...)
+	E := NewSet(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12)
 	if E.IsSubset(&D) {
 		t.Error("E should not be a subset of D")
 	}
 }
 
 func Test_IsProperSubset(t *testing.T) {
-	elements := []interface{}{1, 1, 2, 3, 4, 5}
-	A := NewSet(elements...)
+	A := NewSet(1, 1, 2, 3, 4, 5)
 	if A.Cardinality() != 5 {
 		t.Errorf("A should have 5 elements. Instead it has a cardinality of %d", A.Cardinality())
 	}
 	A.Remove(1)
-	B := NewSet(elements...)
+	B := NewSet(1, 1, 2, 3, 4, 5)
 	B.Remove(2, 4)
-	C := Subset(&A, &B)
+	C := A.Subset(&B)
 	if C.Cardinality() != 2 {
 		t.Errorf("C has a cardinality of %d but was expecting a cardinality of %d", 2, C.Cardinality())
 	}
@@ -111,7 +105,7 @@ func Test_IsProperSubset(t *testing.T) {
 	if !C.IsProperSubset(&A) {
 		t.Error("C should be a proper subset of Set A")
 	}
-	D := NewSet([]interface{}{3, 5}...)
+	D := NewSet(3, 5)
 	if C.IsProperSubset(&D) {
 		t.Error("C should not be a proper subset of Set D as they are the same.")
 	}
@@ -122,12 +116,9 @@ func Test_IsProperSubset(t *testing.T) {
 }
 
 func Test_Equivalence(t *testing.T) {
-	elements := []interface{}{1, 2, 3, 4, 5}
-	elements2 := []interface{}{"1", "2", "3", "4", "5"}
-	elements3 := []interface{}{"hello world"}
-	A := NewSet(elements...)
-	B := NewSet(elements2...)
-	C := NewSet(elements3...)
+	A := NewSet(1, 2, 3, 4, 5)
+	B := NewSet("1", "2", "3", "4", "5")
+	C := NewSet("hello world")
 	if !A.Equivalence(&B) {
 		t.Error("A and B should be equivalent")
 	}
@@ -137,13 +128,12 @@ func Test_Equivalence(t *testing.T) {
 }
 
 func Test_Union(t *testing.T) {
-	elements := []interface{}{1, 1, 2, 3, 4, 5}
-	A := NewSet(elements...)
+	A := NewSet(1, 1, 2, 3, 4, 5)
 	if A.Cardinality() != 5 {
 		t.Errorf("A should have 5 elements. Instead it has a cardinality of %d", A.Cardinality())
 	}
 	A.Remove(1)
-	B := NewSet(elements...)
+	B := NewSet(1, 1, 2, 3, 4, 5)
 	C := A.Union(&B)
 	if C.Cardinality() != 5 {
 		t.Errorf("C should have 5 elements. Instead it has a cardinality of %d", C.Cardinality())
@@ -158,10 +148,8 @@ func Test_Union(t *testing.T) {
 }
 
 func Test_IsSuperset(t *testing.T) {
-	elements := []interface{}{1, 1, 2, 3, 4, 5}
-	A := NewSet(elements...)
-	elements = append(elements, 9, 10, 11)
-	B := NewSet(elements...)
+	A := NewSet(1, 1, 2, 3, 4, 5)
+	B := NewSet(1, 1, 2, 3, 4, 5, 9, 10, 11)
 	if !B.IsSuperset(&A) {
 		t.Error("Expecting B to be a superset of A")
 	}
@@ -171,10 +159,8 @@ func Test_IsSuperset(t *testing.T) {
 }
 
 func Test_IsProperSuperset(t *testing.T) {
-	elements := []interface{}{1, 1, 2, 3, 4, 5}
-	A := NewSet(elements...)
-	elements = append(elements, 9, 10, 11)
-	B := NewSet(elements...)
+	A := NewSet(1, 1, 2, 3, 4, 5)
+	B := NewSet(1, 1, 2, 3, 4, 5, 9, 10, 11)
 	if !B.IsProperSuperset(&A) {
 		t.Error("Expecting B to be a proper superset of A")
 	}
@@ -188,20 +174,20 @@ func Test_IsProperSuperset(t *testing.T) {
 }
 
 func Test_JaccardSimilarity(t *testing.T) {
-	A := NewSet([]interface{}{0, 1, 2, 5, 6, 8, 9}...)
-	B := NewSet([]interface{}{0, 2, 3, 4, 5, 7, 9}...)
+	A := NewSet(0, 1, 2, 5, 6, 8, 9)
+	B := NewSet(0, 2, 3, 4, 5, 7, 9)
 	index := JaccardSimilarity(&A, &B)
 	if index != 0.4 {
 		t.Errorf("expected a similarity index of 0.4 instead got %.2f", index)
 	}
-	C := NewSet([]interface{}{0, 1, 2, 3, 4, 5}...)
-	D := NewSet([]interface{}{6, 7, 8, 9, 10}...)
+	C := NewSet(0, 1, 2, 3, 4, 5)
+	D := NewSet(6, 7, 8, 9, 10)
 	index2 := JaccardSimilarity(&C, &D)
 	if index2 != 0 {
 		t.Errorf("expected a similarity index of 0 instead got %.2f", index)
 	}
-	E := NewSet([]interface{}{"cat", "dog", "hippo", "monkey"}...)
-	F := NewSet([]interface{}{"monkey", "rhino", "ostrich", "salmon"}...)
+	E := NewSet("cat", "dog", "hippo", "monkey")
+	F := NewSet("monkey", "rhino", "ostrich", "salmon")
 	index3 := JaccardSimilarity(&E, &F)
 	shouldBe := 0.14
 	tolerance := 0.01
@@ -211,8 +197,8 @@ func Test_JaccardSimilarity(t *testing.T) {
 }
 
 func Test_JaccardDistance(t *testing.T) {
-	A := NewSet([]interface{}{0, 1, 2, 5, 6, 8, 9}...)
-	B := NewSet([]interface{}{0, 2, 3, 4, 5, 7, 9}...)
+	A := NewSet(0, 1, 2, 5, 6, 8, 9)
+	B := NewSet(0, 2, 3, 4, 5, 7, 9)
 	index := JaccardSimilarity(&A, &B)
 	distance := JaccardDistance(&A, &B)
 	if index != 0.4 {
@@ -224,15 +210,27 @@ func Test_JaccardDistance(t *testing.T) {
 	}
 }
 
-func Test_SuchThat(t *testing.T) {
-	els := []interface{}{1, 2, 3, 4, 5, 6, 7, 8, 9, 10}
+func Test_NewSetSuchThat(t *testing.T) {
 	condition := func(x interface{}) bool {
 		return x.(int)%2 == 0
 	}
-	A := SuchThat(condition, els...)
+	A := NewSetSuchThat(condition, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10)
 	for e := range A.E {
 		if e.(int)%2 != 0 {
 			t.Errorf("Expecting all elements to be positive number yet found element %v", e)
 		}
+	}
+}
+
+func Test_Intersect(t *testing.T) {
+	A := NewSet(1, 2, "3")
+	B := NewSet("1", "2", "3", "4")
+	C := A.Intersect(&B)
+	if C.Cardinality() != 1 && !C.Contains("3") {
+		t.Errorf(`Expecting A intersect B to contain only "3" instead it contains %v`, C.E)
+	}
+	D := B.Intersect(&A)
+	if D.Cardinality() != 1 && !D.Contains("3") {
+		t.Errorf(`Expecting B intersect A to contain only "3" instead it contains %v`, D.E)
 	}
 }

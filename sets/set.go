@@ -26,6 +26,19 @@ func NewSet(els ...interface{}) (A Set) {
 	return
 }
 
+// NewSetSuchThat
+// :, ∣	such that	used to denote a condition, usually in set-builder notation or in a mathematical definition
+// {x2:x+3 is prime}
+func NewSetSuchThat(condition func(x interface{}) bool, els ...interface{}) (A Set) {
+	A = NewSet()
+	for e := range els {
+		if condition(e) {
+			A.Add(e)
+		}
+	}
+	return
+}
+
 // Add inserts one or more elements into A.
 func (A *Set) Add(els ...interface{}) {
 	for _, e := range els {
@@ -74,7 +87,7 @@ func (A *Set) Cardinality() int {
 // A={1,2}
 // B={2,1,4,3,5}
 // A⊆B
-func Subset(A, B *Set) (C Set) {
+func (A *Set) Subset(B *Set) (C Set) {
 	l := A.Cardinality()
 	if l < B.Cardinality() {
 		l = B.Cardinality()
@@ -140,6 +153,10 @@ func (A *Set) IsProperSuperset(B *Set) bool {
 	return A.Cardinality() > B.Cardinality() && A.IsSuperset(B)
 }
 
+// MappingFunction
+
+// Set Operations
+
 // Union creates a new set (C) from elements in A & B.
 // ∪ 	union	a set with the elements in set A or in set B
 // A={1,2}
@@ -157,13 +174,12 @@ func (A *Set) Union(B *Set) (C Set) {
 	return
 }
 
-// Intersection creates a new set (C) from elements in A || B.
+// Intersect creates a new set (C) from elements in A || B.
 // ∩	intersection	a set with the elements in set A and in set B
 // A={1,2}
 // B={2,3,5}
 // A∩B={2}
-func (A *Set) Intersection(B *Set) (C Set) {
-	//TODO add go routines to do both in parallel
+func (A *Set) Intersect(B *Set) (C Set) {
 	C = NewSet()
 	if A.Cardinality() < B.Cardinality() {
 		for e := range A.E {
@@ -187,7 +203,7 @@ func (A *Set) Intersection(B *Set) (C Set) {
 // B={2,3,5,8}
 // A−B={1,4}
 // B−A={5,8}
-func (A *Set) Difference(B *Set) (C Set) {
+func Difference(A, B *Set) (C Set) {
 	for e := range A.E {
 		if !B.Contains(e) {
 			C.Add(e)
@@ -197,7 +213,7 @@ func (A *Set) Difference(B *Set) (C Set) {
 }
 
 // SymetricDifferencec creates a new set (C) from elements in A only AND elements in B only
-func (A *Set) SymetricDifferencec(B *Set) (C Set) {
+func SymetricDifferencec(A, B *Set) (C Set) {
 	//TODO add go routines to do both in parallel
 	for e := range A.E {
 		if !B.Contains(e) {
@@ -218,7 +234,7 @@ func (A *Set) SymetricDifferencec(B *Set) (C Set) {
 // The same formula in notation is:
 // J(A,B) = |A∩B| / |A∪B|
 func JaccardSimilarity(A, B *Set) float64 {
-	D := A.Intersection(B)
+	D := A.Intersect(B)
 	U := A.Union(B)
 	return float64(D.Cardinality()) / float64(U.Cardinality())
 }
@@ -235,18 +251,3 @@ func JaccardDistance(A, B *Set) float64 {
 // B={3,4}
 // A×B={(1,3),(2,3),(1,4),(2,4)}
 // B×A={(3,1),(3,2),(4,1),(4,2)}
-
-// SuchThat
-// :, ∣	such that	used to denote a condition, usually in set-builder notation or in a mathematical definition
-// {x2:x+3 is prime}
-func SuchThat(condition func(x interface{}) bool, els ...interface{}) (A Set) {
-	A = NewSet()
-	for e := range els {
-		if condition(e) {
-			A.Add(e)
-		}
-	}
-	return
-}
-
-// MappingFunction
