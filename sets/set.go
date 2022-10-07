@@ -17,19 +17,24 @@ type Set struct {
 	rLock sync.Mutex
 }
 
+func new() (A Set) {
+	return
+}
+
 // NewSet returns a new set (A) of all unique elements passed into the function call.
-func NewSet(els ...interface{}) (A Set) {
+func NewSet(els ...interface{}) *Set {
+	A := new()
 	A.E = make(elements, len(els))
 	for _, e := range els {
 		A.Add(e)
 	}
-	return
+	return &A
 }
 
-// NewSetSuchThat
+// SuchThat
 // :, ∣	such that	used to denote a condition, usually in set-builder notation or in a mathematical definition
 // {x2:x+3 is prime}
-func NewSetSuchThat(condition func(x interface{}) bool, els ...interface{}) (A Set) {
+func SuchThat(condition func(x interface{}) bool, els ...interface{}) (A *Set) {
 	A = NewSet()
 	for e := range els {
 		if condition(e) {
@@ -148,7 +153,7 @@ func (A *Set) IsProperSuperset(B *Set) bool {
 // A={1,2}
 // B={2,3,5}
 // A∪B={1,2,3,5}
-func (A *Set) Union(B *Set) (C Set) {
+func (A *Set) Union(B *Set) (C *Set) {
 	return Union(A, B)
 }
 
@@ -157,7 +162,7 @@ func (A *Set) Union(B *Set) (C Set) {
 // A={1,2}
 // B={2,3,5}
 // A∩B={2}
-func (A *Set) Intersect(B *Set) (C Set) {
+func (A *Set) Intersect(B *Set) (C *Set) {
 	return Intersect(A, B)
 }
 
@@ -190,7 +195,7 @@ func Subset(A, B *Set) (C Set) {
 // A={1,2}
 // B={2,3,5}
 // A∪B={1,2,3,5}
-func Union(A, B *Set) (C Set) {
+func Union(A, B *Set) (C *Set) {
 	//TODO add go routines to do both in parallel
 	C = NewSet()
 	for e := range A.E {
@@ -207,7 +212,7 @@ func Union(A, B *Set) (C Set) {
 // A={1,2}
 // B={2,3,5}
 // A∩B={2}
-func Intersect(A, B *Set) (C Set) {
+func Intersect(A, B *Set) (C *Set) {
 	C = NewSet()
 	if A.Cardinality() < B.Cardinality() {
 		for e := range A.E {
@@ -231,7 +236,7 @@ func Intersect(A, B *Set) (C Set) {
 // B={2,3,5,8}
 // A−B={1,4}
 // B−A={5,8}
-func Difference(A, B *Set) (C Set) {
+func Difference(A, B *Set) (C *Set) {
 	C = NewSet()
 	for e := range A.E {
 		if !B.Contains(e) {
@@ -242,7 +247,7 @@ func Difference(A, B *Set) (C Set) {
 }
 
 // SymetricDifferencec creates a new set (C) from elements in A only AND elements in B only
-func SymetricDifferencec(A, B *Set) (C Set) {
+func SymetricDifferencec(A, B *Set) (C *Set) {
 	C = NewSet()
 	//TODO add go routines to do both in parallel
 	for e := range A.E {
@@ -256,6 +261,19 @@ func SymetricDifferencec(A, B *Set) (C Set) {
 		}
 	}
 	return
+}
+
+// Equals
+func Equals(A, B *Set) bool {
+	if A.Cardinality() != B.Cardinality() {
+		return false
+	}
+	for e := range A.E {
+		if !B.Contains(e) {
+			return false
+		}
+	}
+	return true
 }
 
 // JaccardSimilarity
@@ -277,6 +295,28 @@ func JaccardDistance(A, B *Set) float64 {
 
 // CosineSimilarity & other similarities
 
+// DSC
+// Dice Similarity Coefficient
+// The Sorensen Coefficient equals twice the number of elements common to both sets divided by the sum of the number of elements in each set.
+func DSC(A, B *Set) float64 {
+	commonElements := float64(A.Intersect(B).Cardinality())
+	sumOfElements := float64(A.Cardinality() + B.Cardinality())
+	return commonElements * 2 / sumOfElements
+}
+
+// Tversky Index
+// OverlapCoefficient
+// The Overlap Coefficient is defined as the size of the intersection divided by the size of the smaller of the two sets.
+func OverlapCoefficient(A, B *Set) float64 {
+	commonElements := float64(A.Intersect(B).Cardinality())
+	min := A.Cardinality()
+	if B.Cardinality() < A.Cardinality() {
+		min = B.Cardinality()
+	}
+	return commonElements / float64(min)
+}
+
+// Powerset
 // CartesianProduct
 // ×	Cartesian product	a set containing all possible combinations of one element from A and one element from B
 // A={1,2}
