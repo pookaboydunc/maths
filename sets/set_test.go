@@ -234,3 +234,21 @@ func Test_Intersect(t *testing.T) {
 		t.Errorf(`Expecting B intersect A to contain only "3" instead it contains %v`, D.E)
 	}
 }
+
+func Test_Difference(t *testing.T) {
+	A := NewSet(1, 2, "3")
+	B := NewSet("1", "2", "3", "4")
+	C := Difference(&A, &B)
+	if C.Cardinality() != 2 && !C.Contains(1, 2) {
+		t.Errorf(`Expecting A difference B to contain only 1 & 2 instead it contains %v`, C.E)
+	}
+}
+
+func Test_SymetricDifferencec(t *testing.T) {
+	A := NewSet(1, 2, "3")
+	B := NewSet("1", "2", "3", "4")
+	C := SymetricDifferencec(&A, &B)
+	if C.Cardinality() != 5 && !C.Contains(1, 2, "1", "2", "4") {
+		t.Errorf(`Expecting A difference B to contain only 1, 2, "1", "2" & "4" instead it contains %v`, C.E)
+	}
+}

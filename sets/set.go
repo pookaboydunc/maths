@@ -88,17 +88,7 @@ func (A *Set) Cardinality() int {
 // B={2,1,4,3,5}
 // A⊆B
 func (A *Set) Subset(B *Set) (C Set) {
-	l := A.Cardinality()
-	if l < B.Cardinality() {
-		l = B.Cardinality()
-	}
-	C.E = make(elements, l)
-	for e := range A.E {
-		if B.Contains(e) {
-			C.Add(e)
-		}
-	}
-	return
+	return Subset(A, B)
 }
 
 // IsSubset checks if A is a subset of B.
@@ -153,16 +143,54 @@ func (A *Set) IsProperSuperset(B *Set) bool {
 	return A.Cardinality() > B.Cardinality() && A.IsSuperset(B)
 }
 
-// MappingFunction
-
-// Set Operations
-
 // Union creates a new set (C) from elements in A & B.
 // ∪ 	union	a set with the elements in set A or in set B
 // A={1,2}
 // B={2,3,5}
 // A∪B={1,2,3,5}
 func (A *Set) Union(B *Set) (C Set) {
+	return Union(A, B)
+}
+
+// Intersect creates a new set (C) from elements in A || B.
+// ∩	intersection	a set with the elements in set A and in set B
+// A={1,2}
+// B={2,3,5}
+// A∩B={2}
+func (A *Set) Intersect(B *Set) (C Set) {
+	return Intersect(A, B)
+}
+
+// MappingFunction
+
+// Set Operations
+
+// Subset returns a new set (C) that is the subset of A & B.
+//
+// ⊆	subset	set A is a subset of set B when each element in A is also an element in B
+// A={1,2}
+// B={2,1,4,3,5}
+// A⊆B
+func Subset(A, B *Set) (C Set) {
+	l := A.Cardinality()
+	if l < B.Cardinality() {
+		l = B.Cardinality()
+	}
+	C.E = make(elements, l)
+	for e := range A.E {
+		if B.Contains(e) {
+			C.Add(e)
+		}
+	}
+	return
+}
+
+// Union creates a new set (C) from elements in A & B.
+// ∪ 	union	a set with the elements in set A or in set B
+// A={1,2}
+// B={2,3,5}
+// A∪B={1,2,3,5}
+func Union(A, B *Set) (C Set) {
 	//TODO add go routines to do both in parallel
 	C = NewSet()
 	for e := range A.E {
@@ -179,7 +207,7 @@ func (A *Set) Union(B *Set) (C Set) {
 // A={1,2}
 // B={2,3,5}
 // A∩B={2}
-func (A *Set) Intersect(B *Set) (C Set) {
+func Intersect(A, B *Set) (C Set) {
 	C = NewSet()
 	if A.Cardinality() < B.Cardinality() {
 		for e := range A.E {
@@ -204,6 +232,7 @@ func (A *Set) Intersect(B *Set) (C Set) {
 // A−B={1,4}
 // B−A={5,8}
 func Difference(A, B *Set) (C Set) {
+	C = NewSet()
 	for e := range A.E {
 		if !B.Contains(e) {
 			C.Add(e)
@@ -214,6 +243,7 @@ func Difference(A, B *Set) (C Set) {
 
 // SymetricDifferencec creates a new set (C) from elements in A only AND elements in B only
 func SymetricDifferencec(A, B *Set) (C Set) {
+	C = NewSet()
 	//TODO add go routines to do both in parallel
 	for e := range A.E {
 		if !B.Contains(e) {
@@ -244,6 +274,8 @@ func JaccardSimilarity(A, B *Set) float64 {
 func JaccardDistance(A, B *Set) float64 {
 	return 1 - JaccardSimilarity(A, B)
 }
+
+// CosineSimilarity & other similarities
 
 // CartesianProduct
 // ×	Cartesian product	a set containing all possible combinations of one element from A and one element from B
