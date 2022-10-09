@@ -265,15 +265,10 @@ func SymetricDifferencec(A, B *Set) (C *Set) {
 
 // Equals
 func Equals(A, B *Set) bool {
-	if A.Cardinality() != B.Cardinality() {
+	if !A.Equivalence(B) {
 		return false
 	}
-	for e := range A.E {
-		if !B.Contains(e) {
-			return false
-		}
-	}
-	return true
+	return A.IsSubset(B)
 }
 
 // JaccardSimilarity
