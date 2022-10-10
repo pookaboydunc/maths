@@ -281,16 +281,13 @@ func Subset(A, B *Set) (C Set) {
 	return
 }
 
-// Compliment
+// Complement
 // When all sets in the universe, i.e. all sets under consideration, are considered to be members of a given set U, the absolute complement of A is the set of elements in U that are not in A.
-func Compliment(A *Set, U ...*Set) (C *Set) {
+func Complement(A *Set, U ...*Set) (C *Set) {
 	C = NewSet()
 	for _, s := range U {
-		for _, e := range s.E {
-			if !A.Contains(e) {
-				C.Add(e)
-			}
-		}
+		n := Difference(s, C)
+		C.Add(n.E)
 	}
 	return
 }
