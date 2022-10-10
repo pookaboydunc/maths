@@ -96,6 +96,33 @@ func (A *Set) Subset(B *Set) (C Set) {
 	return Subset(A, B)
 }
 
+/*
+	Comparison checks
+*/
+
+// IsDisjoint
+// Two sets are disjoint sets if there are no common elements in both sets. Example: A = {1,2,3,4} B = {5,6,7,8}. Here, set A and set B are disjoint sets.
+
+// IsEquivalent checks if A & B have the same Cardinality.
+//
+// Sets are equivalent when their cardinality is the same. NOT to be mistaken with equality.
+func (A *Set) IsEquivalent(B *Set) bool {
+	return A.Cardinality() == B.Cardinality()
+}
+
+// Equals
+// If two sets have the same elements in them, then they are called equal sets. Example: A = {1,2,3} and B = {1,2,3}. Here, set A and set B are equal sets. This can be represented as A = B.
+func (A *Set) IsEqual(B *Set) bool {
+	return Equals(A, B)
+}
+
+func Equals(A, B *Set) bool {
+	if !A.IsEquivalent(B) {
+		return false
+	}
+	return A.IsSubset(B)
+}
+
 // IsSubset checks if A is a subset of B.
 //
 // ⊆	subset	set A is a subset of set B when each element in A is also an element in B
@@ -123,13 +150,6 @@ func (A *Set) IsProperSubset(B *Set) bool {
 	return A.Cardinality() < B.Cardinality() && A.IsSubset(B)
 }
 
-// Equivalence checks if A & B have the same Cardinality.
-//
-// Sets are equivalent when their cardinality is the same. NOT to be mistaken with equality.
-func (A *Set) Equivalence(B *Set) bool {
-	return A.Cardinality() == B.Cardinality()
-}
-
 // IsSuperset checks if A is a superset of B.
 // ⊇	superset	set A is a superset of set B when B is a subset of A
 // A={2,4,6,7,8}
@@ -148,6 +168,8 @@ func (A *Set) IsProperSuperset(B *Set) bool {
 	return A.Cardinality() > B.Cardinality() && A.IsSuperset(B)
 }
 
+// Operations and Functions
+
 // Union creates a new set (C) from elements in A & B.
 // ∪ 	union	a set with the elements in set A or in set B
 // A={1,2}
@@ -164,47 +186,6 @@ func (A *Set) Union(B *Set) (C *Set) {
 // A∩B={2}
 func (A *Set) Intersect(B *Set) (C *Set) {
 	return Intersect(A, B)
-}
-
-// MappingFunction
-
-// Set Operations
-
-// Subset returns a new set (C) that is the subset of A & B.
-//
-// ⊆	subset	set A is a subset of set B when each element in A is also an element in B
-// A={1,2}
-// B={2,1,4,3,5}
-// A⊆B
-func Subset(A, B *Set) (C Set) {
-	l := A.Cardinality()
-	if l < B.Cardinality() {
-		l = B.Cardinality()
-	}
-	C.E = make(elements, l)
-	for e := range A.E {
-		if B.Contains(e) {
-			C.Add(e)
-		}
-	}
-	return
-}
-
-// Union creates a new set (C) from elements in A & B.
-// ∪ 	union	a set with the elements in set A or in set B
-// A={1,2}
-// B={2,3,5}
-// A∪B={1,2,3,5}
-func Union(A, B *Set) (C *Set) {
-	//TODO add go routines to do both in parallel
-	C = NewSet()
-	for e := range A.E {
-		C.Add(e)
-	}
-	for e := range B.E {
-		C.Add(e)
-	}
-	return
 }
 
 // Intersect creates a new set (C) from elements in A || B.
@@ -230,7 +211,24 @@ func Intersect(A, B *Set) (C *Set) {
 	return
 }
 
-// Difference creates a new set (C) from elements only in A
+// Union creates a new set (C) from elements in A & B.
+// ∪ 	union	a set with the elements in set A or in set B
+// A={1,2}
+// B={2,3,5}
+// A∪B={1,2,3,5}
+func Union(A, B *Set) (C *Set) {
+	//TODO add go routines to do both in parallel
+	C = NewSet()
+	for e := range A.E {
+		C.Add(e)
+	}
+	for e := range B.E {
+		C.Add(e)
+	}
+	return
+}
+
+// Difference creates a new set (C) from elements only in A. AKA the relative complement.
 // −, ∖	set difference	elements in set A that are not in B
 // A={1,2,3,4}
 // B={2,3,5,8}
@@ -263,58 +261,50 @@ func SymetricDifferencec(A, B *Set) (C *Set) {
 	return
 }
 
-// Equals
-func Equals(A, B *Set) bool {
-	if !A.Equivalence(B) {
-		return false
-	}
-	return A.IsSubset(B)
-}
-
-// JaccardSimilarity
-// Jaccard Index = (the number in both sets) / (the number in either set)
+// Subset returns a new set (C) that is the subset of A & B.
 //
-// The same formula in notation is:
-// J(A,B) = |A∩B| / |A∪B|
-func JaccardSimilarity(A, B *Set) float64 {
-	D := A.Intersect(B)
-	U := A.Union(B)
-	return float64(D.Cardinality()) / float64(U.Cardinality())
-}
-
-// JaccardDistance
-// Jaccard distance = 1 - JaccardSimilarity
-func JaccardDistance(A, B *Set) float64 {
-	return 1 - JaccardSimilarity(A, B)
-}
-
-// CosineSimilarity & other similarities
-
-// DSC
-// Dice Similarity Coefficient
-// The Sorensen Coefficient equals twice the number of elements common to both sets divided by the sum of the number of elements in each set.
-func DSC(A, B *Set) float64 {
-	commonElements := float64(A.Intersect(B).Cardinality())
-	sumOfElements := float64(A.Cardinality() + B.Cardinality())
-	return commonElements * 2 / sumOfElements
-}
-
-// Tversky Index
-// OverlapCoefficient
-// The Overlap Coefficient is defined as the size of the intersection divided by the size of the smaller of the two sets.
-func OverlapCoefficient(A, B *Set) float64 {
-	commonElements := float64(A.Intersect(B).Cardinality())
-	min := A.Cardinality()
-	if B.Cardinality() < A.Cardinality() {
-		min = B.Cardinality()
+// ⊆	subset	set A is a subset of set B when each element in A is also an element in B
+// A={1,2}
+// B={2,1,4,3,5}
+// A⊆B
+func Subset(A, B *Set) (C Set) {
+	l := A.Cardinality()
+	if l < B.Cardinality() {
+		l = B.Cardinality()
 	}
-	return commonElements / float64(min)
+	C.E = make(elements, l)
+	for e := range A.E {
+		if B.Contains(e) {
+			C.Add(e)
+		}
+	}
+	return
 }
+
+// Compliment
+// When all sets in the universe, i.e. all sets under consideration, are considered to be members of a given set U, the absolute complement of A is the set of elements in U that are not in A.
+func Compliment(A *Set, U ...*Set) (C *Set) {
+	C = NewSet()
+	for _, s := range U {
+		for _, e := range s.E {
+			if !A.Contains(e) {
+				C.Add(e)
+			}
+		}
+	}
+	return
+}
+
+// MappingFunction
 
 // Powerset
+// Power set is the set of all subsets that a set could contain. Example: Set A = {1,2,3}. Power set of A is = {{∅}, {1}, {2}, {3}, {1,2}, {2,3}, {1,3}, {1,2,3}}.
+
 // CartesianProduct
 // ×	Cartesian product	a set containing all possible combinations of one element from A and one element from B
 // A={1,2}
 // B={3,4}
 // A×B={(1,3),(2,3),(1,4),(2,4)}
 // B×A={(3,1),(3,2),(4,1),(4,2)}
+
+// Disjoint Union

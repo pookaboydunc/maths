@@ -115,14 +115,14 @@ func Test_IsProperSubset(t *testing.T) {
 	}
 }
 
-func Test_Equivalence(t *testing.T) {
+func Test_IsEquivalent(t *testing.T) {
 	A := NewSet(1, 2, 3, 4, 5)
 	B := NewSet("1", "2", "3", "4", "5")
 	C := NewSet("hello world")
-	if !A.Equivalence(B) {
+	if !A.IsEquivalent(B) {
 		t.Error("A and B should be equivalent")
 	}
-	if B.Equivalence(C) {
+	if B.IsEquivalent(C) {
 		t.Error("B and C should not be equivalent")
 	}
 }
@@ -167,7 +167,7 @@ func Test_CommutativeUnion(t *testing.T) {
 	}
 	D := Union(B, A)
 
-	if !Equals(D, C) {
+	if !D.IsEqual(C) {
 		t.Errorf("Expected D (%v) to be the same as C (%v)", D, C)
 	}
 }
@@ -309,5 +309,14 @@ func Test_OverlapCoeffiecient(t *testing.T) {
 	A := NewSet("ni", "ig", "gh", "ht")
 	B := NewSet("br", "ri", "ig", "gh", "ht")
 	overlapCo := OverlapCoefficient(A, B)
-	t.Log(overlapCo)
+	if (overlapCo) != 0.75 {
+		t.Errorf("Expecting 0.75 but got %f", overlapCo)
+	}
+	C := NewSet("br", "ri", "ig", "gh", "ht")
+	D := NewSet("fr", "ry")
+	overlapCo = OverlapCoefficient(C, D)
+	if (overlapCo) != 0 {
+		t.Errorf("Expecting 0 but got %f", overlapCo)
+	}
+
 }

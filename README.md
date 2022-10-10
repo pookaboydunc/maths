@@ -6,4 +6,4 @@ Feel free to use this code if you like. Once I have "finished" my journey in a t
 
 ## Topics
 
-- [Set Theory](sets/README.md)
+- ### Set Theory
