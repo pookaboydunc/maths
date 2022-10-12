@@ -2,6 +2,7 @@
 package set
 
 import (
+	"math"
 	"sync"
 )
 
@@ -68,6 +69,10 @@ func (A *Set) Contains(els ...interface{}) bool {
 	A.rLock.Lock()
 	defer A.rLock.Unlock()
 	for _, e := range els {
+		// check if e is a Set
+		// if s, ok := e.(*Set); ok {
+
+		// }
 		if _, ok := A.E[e]; !ok {
 			return false
 		}
@@ -283,19 +288,31 @@ func Subset(A, B *Set) (C Set) {
 
 // Complement
 // When all sets in the universe, i.e. all sets under consideration, are considered to be members of a given set U, the absolute complement of A is the set of elements in U that are not in A.
-func Complement(A *Set, U ...*Set) (C *Set) {
-	C = NewSet()
+func Complement(A *Set, U ...*Set) *Set {
+	universe := NewSet()
 	for _, s := range U {
-		n := Difference(s, C)
-		C.Add(n.E)
+		for e := range s.E {
+			universe.Add(e)
+		}
+	}
+	return Difference(A, universe)
+}
+
+// MappingFunction
+func (A *Set) Map(f func(x interface{}) interface{}) (B *Set) {
+	B = NewSet()
+	for e := range A.E {
+		B.Add(f(e))
 	}
 	return
 }
 
-// MappingFunction
-
-// Powerset
-// Power set is the set of all subsets that a set could contain. Example: Set A = {1,2,3}. Power set of A is = {{∅}, {1}, {2}, {3}, {1,2}, {2,3}, {1,3}, {1,2,3}}.
+// PowersetCardinality
+// It is not required to have a powerset in order to know the cardinality of another given sets powerset
+// The cardinality of a set is the total number of elements in the set. A power set contains the list of all the subsets of a set. The total number of subsets for a set of 'n' elements is given by 2n. Since the subsets of a set are the elements of a power set, the cardinality of a power set is given by |P(A)| = 2n
+func (A *Set) PowersetCardinality() float64 {
+	return math.Pow(2, float64(A.Cardinality()))
+}
 
 // CartesianProduct
 // ×	Cartesian product	a set containing all possible combinations of one element from A and one element from B

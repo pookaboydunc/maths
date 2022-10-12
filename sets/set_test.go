@@ -320,3 +320,36 @@ func Test_OverlapCoeffiecient(t *testing.T) {
 	}
 
 }
+
+func Test_PowersetCardinality(t *testing.T) {
+	A := NewSet(1, 2, 3)
+	powCard := A.PowersetCardinality()
+	if powCard != 8 {
+		t.Errorf("Expecting a powerset cardinality of 4 but received %f", powCard)
+	}
+}
+
+func Test_Complement(t *testing.T) {
+	A := NewSet(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15)
+	B := NewSet(1, 2, 3, 4, 5)
+	C := NewSet(6, 7, 8, 9, 10)
+	U := []*Set{B, C}
+	D := Complement(A, U...)
+	if D.Cardinality() != 5 {
+		t.Errorf("Expecting cardinality of the complement to be 5 instead got %d", D.Cardinality())
+	}
+	t.Log(D.E)
+}
+
+func Test_Map(t *testing.T) {
+	A := NewSet(1, 2, 3, 4)
+	f := func(x interface{}) interface{} {
+		return x.(int) + A.Cardinality()
+	}
+	B := A.Map(f)
+	for e := range A.E {
+		if !B.Contains((f(e))) {
+			t.Error("The mapping function has not correctly mapped elements")
+		}
+	}
+}
