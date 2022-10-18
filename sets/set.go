@@ -26,7 +26,7 @@ type Tuple struct {
 
 // String returns a string representation of a tuple
 func (t *Tuple) String() (s string) {
-	s = fmt.Sprintf("(%s,%s)", t.a, t.b)
+	s = fmt.Sprintf("(%v,%v)", t.a, t.b)
 	return
 }
 
@@ -88,7 +88,7 @@ func (A *Set) String() (s string) {
 	for el := range A.E {
 		elements = append(elements, fmt.Sprintf("%v", el))
 	}
-	s = fmt.Sprintf("{%s}", strings.Join(elements, ", "))
+	s = fmt.Sprintf("{%v}", strings.Join(elements, ", "))
 	return
 }
 
