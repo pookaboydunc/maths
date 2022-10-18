@@ -1,6 +1,7 @@
 package set
 
 import (
+	"fmt"
 	"math"
 	"testing"
 )
@@ -359,4 +360,16 @@ func Test_Map(t *testing.T) {
 			t.Error("The mapping function has not correctly mapped elements")
 		}
 	}
+}
+
+// A={1,2}
+// B={3,4}
+// A×B={(1,3),(2,3),(1,4),(2,4)}
+// B×A={(3,1),(3,2),(4,1),(4,2)}
+
+func Test_CartesianProduct(t *testing.T) {
+	A := NewSet(1, 2)
+	B := NewSet(3, 4)
+	C := A.CartesianProduct(B)
+	fmt.Println(C.String())
 }

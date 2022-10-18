@@ -20,6 +20,16 @@ type Set struct {
 	rLock sync.Mutex
 }
 
+type Tuple struct {
+	a, b interface{}
+}
+
+// String returns a string representation of a tuple
+func (t *Tuple) String() (s string) {
+	s = fmt.Sprintf("(%s,%s)", t.a, t.b)
+	return
+}
+
 func new() (A Set) {
 	return
 }
@@ -72,7 +82,7 @@ func (A *Set) SetToSlice() []interface{} {
 	return ss
 }
 
-// String returns a string representation of container
+// String returns a string representation of Set
 func (A *Set) String() (s string) {
 	elements := make([]string, 0)
 	for el := range A.E {
@@ -90,10 +100,6 @@ func (A *Set) Contains(els ...interface{}) bool {
 	A.rLock.Lock()
 	defer A.rLock.Unlock()
 	for _, e := range els {
-		// check if e is a Set
-		// if s, ok := e.(*Set); ok {
-
-		// }
 		if _, ok := A.E[e]; !ok {
 			return false
 		}
@@ -358,5 +364,15 @@ func (A *Set) PowersetCardinality() int {
 // B={3,4}
 // A×B={(1,3),(2,3),(1,4),(2,4)}
 // B×A={(3,1),(3,2),(4,1),(4,2)}
+func (A *Set) CartesianProduct(B *Set) (C *Set) {
+	C = NewSet()
+	for el := range A.E {
+		for el2 := range B.E {
+			comb := Tuple{el, el2}
+			C.Add(comb)
+		}
+	}
+	return
+}
 
 // Disjoint Union
