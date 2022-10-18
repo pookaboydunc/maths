@@ -2,7 +2,9 @@
 package set
 
 import (
+	"fmt"
 	"math"
+	"strings"
 	"sync"
 )
 
@@ -59,6 +61,25 @@ func (A *Set) Remove(els ...interface{}) {
 	for _, e := range els {
 		delete(A.E, e)
 	}
+}
+
+// SetToSlice converts a set to a slice.
+func (A *Set) SetToSlice() []interface{} {
+	ss := make([]interface{}, 0)
+	for el := range A.E {
+		ss = append(ss, el)
+	}
+	return ss
+}
+
+// String returns a string representation of container
+func (A *Set) String() (s string) {
+	elements := make([]string, 0)
+	for el := range A.E {
+		elements = append(elements, fmt.Sprintf("%v", el))
+	}
+	s = fmt.Sprintf("{%s}", strings.Join(elements, ", "))
+	return
 }
 
 // Contains checks if one or more elements are in A.
@@ -307,11 +328,28 @@ func (A *Set) Map(f func(x interface{}) interface{}) (B *Set) {
 	return
 }
 
+// Powerset
+// Power set is the set of all subsets that a set could contain. Example: Set A = {1,2,3}. Power set of A is = {{∅}, {1}, {2}, {3}, {1,2}, {2,3}, {1,3}, {1,2,3}}.
+func (A *Set) Powerset() (B *Set) {
+	ASlice := A.SetToSlice()
+	B = NewSet()
+	for counter := 0; counter < A.PowersetCardinality(); counter++ {
+		S := NewSet()
+		for j := 0; j < len(ASlice); j++ {
+			if (counter & (1 << j)) > 0 {
+				S.Add(ASlice[j])
+			}
+		}
+		B.Add(S)
+	}
+	return
+}
+
 // PowersetCardinality
 // It is not required to have a powerset in order to know the cardinality of another given sets powerset
 // The cardinality of a set is the total number of elements in the set. A power set contains the list of all the subsets of a set. The total number of subsets for a set of 'n' elements is given by 2n. Since the subsets of a set are the elements of a power set, the cardinality of a power set is given by |P(A)| = 2n
-func (A *Set) PowersetCardinality() float64 {
-	return math.Pow(2, float64(A.Cardinality()))
+func (A *Set) PowersetCardinality() int {
+	return int(math.Pow(2, float64(A.Cardinality())))
 }
 
 // CartesianProduct

@@ -318,14 +318,13 @@ func Test_OverlapCoeffiecient(t *testing.T) {
 	if (overlapCo) != 0 {
 		t.Errorf("Expecting 0 but got %f", overlapCo)
 	}
-
 }
 
 func Test_PowersetCardinality(t *testing.T) {
 	A := NewSet(1, 2, 3)
 	powCard := A.PowersetCardinality()
 	if powCard != 8 {
-		t.Errorf("Expecting a powerset cardinality of 4 but received %f", powCard)
+		t.Errorf("Expecting a powerset cardinality of 4 but received %d", powCard)
 	}
 }
 
@@ -339,6 +338,14 @@ func Test_Complement(t *testing.T) {
 		t.Errorf("Expecting cardinality of the complement to be 5 instead got %d", D.Cardinality())
 	}
 	t.Log(D.E)
+}
+
+func Test_Powerset(t *testing.T) {
+	A := NewSet(1, 2, 3)
+	P := A.Powerset()
+	if P.Cardinality() != 8 {
+		t.Errorf("Expecting a cardinality of %d instead got %d", 8, P.Cardinality())
+	}
 }
 
 func Test_Map(t *testing.T) {
