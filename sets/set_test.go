@@ -9,26 +9,26 @@ import (
 func Test_NewSet(t *testing.T) {
 	A := NewSet(1, 1, 2, 3, 4, 5)
 	if A.Cardinality() != 5 {
-		t.Errorf("A should have 5 elements. Instead it has a cardinality of %d", A.Cardinality())
+		t.Errorf("A should have 5 elements. Instead it has a cardinality of %f", A.Cardinality())
 	}
 	A.Remove(1)
 	if A.Cardinality() != 4 {
-		t.Errorf("A does should have 4 elements after one was removed. Instead it has a cardinality of %d", A.Cardinality())
+		t.Errorf("A does should have 4 elements after one was removed. Instead it has a cardinality of %f", A.Cardinality())
 	}
 	B := NewSet()
 	if B.Cardinality() != 0 {
-		t.Errorf("B should not have any elements. Instead it has a cardinality of %d", B.Cardinality())
+		t.Errorf("B should not have any elements. Instead it has a cardinality of %f", B.Cardinality())
 	}
 	B.Add("20")
 	if B.Cardinality() != 1 {
-		t.Errorf("B should have 1 element. Instead it has a cardinality of %d", B.Cardinality())
+		t.Errorf("B should have 1 element. Instead it has a cardinality of %f", B.Cardinality())
 	}
 }
 
 func Test_Contains(t *testing.T) {
 	A := NewSet(1, 1, 2, 3, 4, 5)
 	if A.Cardinality() != 5 {
-		t.Errorf("A should have 5 elements. Instead it has a cardinality of %d", A.Cardinality())
+		t.Errorf("A should have 5 elements. Instead it has a cardinality of %f", A.Cardinality())
 	}
 	if !A.Contains(1) {
 		t.Error("A should contain the 1 element.")
@@ -47,33 +47,33 @@ func Test_Contains(t *testing.T) {
 func Test_SubsetOf(t *testing.T) {
 	A := NewSet(1, 1, 2, 3, 4, 5)
 	if A.Cardinality() != 5 {
-		t.Errorf("A should have 5 elements. Instead it has a cardinality of %d", A.Cardinality())
+		t.Errorf("A should have 5 elements. Instead it has a cardinality of %f", A.Cardinality())
 	}
 	A.Remove(1)
 	B := NewSet(1, 1, 2, 3, 4, 5)
 	B.Remove(2, 3, 4)
 	C := A.Subset(B)
 	if C.Cardinality() != 1 {
-		t.Errorf("C has a cardinality of %d but was expecting a cardinality of %d", 1, C.Cardinality())
+		t.Errorf("C has a cardinality of %f but was expecting a cardinality of %d", C.Cardinality(), 1)
 	}
 	D := NewSet(5, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20)
 	F := C.Subset(D)
 	if F.Cardinality() != 1 {
-		t.Errorf("F has a cardinality of %d but was expecting a cardinality of %d", 1, F.Cardinality())
+		t.Errorf("F has a cardinality of %f but was expecting a cardinality of %d", F.Cardinality(), 1)
 	}
 }
 
 func Test_IsSubset(t *testing.T) {
 	A := NewSet(1, 1, 2, 3, 4, 5)
 	if A.Cardinality() != 5 {
-		t.Errorf("A should have 5 elements. Instead it has a cardinality of %d", A.Cardinality())
+		t.Errorf("A should have 5 elements. Instead it has a cardinality of %f", A.Cardinality())
 	}
 	A.Remove(1)
 	B := NewSet(1, 1, 2, 3, 4, 5)
 	B.Remove(2, 3, 4)
 	C := A.Subset(B)
 	if C.Cardinality() != 1 {
-		t.Errorf("C has a cardinality of %d but was expecting a cardinality of %d", 1, C.Cardinality())
+		t.Errorf("C has a cardinality of %f but was expecting a cardinality of %d", C.Cardinality(), 1)
 	}
 	if !C.IsSubset(A) {
 		t.Error("C should be a subset of Set A")
@@ -91,14 +91,14 @@ func Test_IsSubset(t *testing.T) {
 func Test_IsProperSubset(t *testing.T) {
 	A := NewSet(1, 1, 2, 3, 4, 5)
 	if A.Cardinality() != 5 {
-		t.Errorf("A should have 5 elements. Instead it has a cardinality of %d", A.Cardinality())
+		t.Errorf("A should have 5 elements. Instead it has a cardinality of %f", A.Cardinality())
 	}
 	A.Remove(1)
 	B := NewSet(1, 1, 2, 3, 4, 5)
 	B.Remove(2, 4)
 	C := A.Subset(B)
 	if C.Cardinality() != 2 {
-		t.Errorf("C has a cardinality of %d but was expecting a cardinality of %d", 2, C.Cardinality())
+		t.Errorf("C has a cardinality of %d but was expecting a cardinality of %f", 2, C.Cardinality())
 	}
 	if !C.IsSubset(A) {
 		t.Error("C should be a subset of Set A")
@@ -131,13 +131,13 @@ func Test_IsEquivalent(t *testing.T) {
 func Test_Union(t *testing.T) {
 	A := NewSet(1, 1, 2, 3, 4, 5)
 	if A.Cardinality() != 5 {
-		t.Errorf("A should have 5 elements. Instead it has a cardinality of %d", A.Cardinality())
+		t.Errorf("A should have 5 elements. Instead it has a cardinality of %f", A.Cardinality())
 	}
 	A.Remove(1)
 	B := NewSet(1, 1, 2, 3, 4, 5)
 	C := A.Union(B)
 	if C.Cardinality() != 5 {
-		t.Errorf("C should have 5 elements. Instead it has a cardinality of %d", C.Cardinality())
+		t.Errorf("C should have 5 elements. Instead it has a cardinality of %f", C.Cardinality())
 	}
 	for e := range C.E {
 		if !A.Contains(e) {
@@ -146,18 +146,26 @@ func Test_Union(t *testing.T) {
 			}
 		}
 	}
+	X := NewSet(1, 1, 2, 3, 4, 5)
+	Y := NewSet(1, 2)
+	Z := NewSet(3, 4, 5, 6)
+	op1 := X.Union(Y.Union(Z))
+	op2 := X.Union(Y).Union(Z)
+	if op1.Cardinality() != op2.Cardinality() {
+		t.Error("Set union operations do not appear to be associative")
+	}
 }
 
 func Test_CommutativeUnion(t *testing.T) {
 	A := NewSet(1, 1, 2, 3, 4, 5)
 	if A.Cardinality() != 5 {
-		t.Errorf("A should have 5 elements. Instead it has a cardinality of %d", A.Cardinality())
+		t.Errorf("A should have 5 elements. Instead it has a cardinality of %f", A.Cardinality())
 	}
 	A.Remove(1)
 	B := NewSet(1, 1, 2, 3, 4, 5)
 	C := A.Union(B)
 	if C.Cardinality() != 5 {
-		t.Errorf("C should have 5 elements. Instead it has a cardinality of %d", C.Cardinality())
+		t.Errorf("C should have 5 elements. Instead it has a cardinality of %f", C.Cardinality())
 	}
 	for e := range C.E {
 		if !A.Contains(e) {
@@ -275,6 +283,14 @@ func Test_Intersect(t *testing.T) {
 	if D.Cardinality() != 1 && !D.Contains("3") {
 		t.Errorf(`Expecting B intersect A to contain only "3" instead it contains %v`, D.E)
 	}
+	X := NewSet(1, 1, 2, 3, 4, 5)
+	Y := NewSet(1, 2)
+	Z := NewSet(3, 4, 5, 6)
+	op1 := X.Intersect(Y.Intersect(Z))
+	op2 := X.Intersect(Y).Intersect(Z)
+	if op1.Cardinality() != op2.Cardinality() {
+		t.Error("Set intersection operations do not appear to be associative")
+	}
 }
 
 func Test_Difference(t *testing.T) {
@@ -336,7 +352,7 @@ func Test_Complement(t *testing.T) {
 	U := []*Set{B, C}
 	D := Complement(A, U...)
 	if D.Cardinality() != 5 {
-		t.Errorf("Expecting cardinality of the complement to be 5 instead got %d", D.Cardinality())
+		t.Errorf("Expecting cardinality of the complement to be 5 instead got %f", D.Cardinality())
 	}
 	t.Log(D.E)
 }
@@ -345,31 +361,22 @@ func Test_Powerset(t *testing.T) {
 	A := NewSet(1, 2, 3)
 	P := A.Powerset()
 	if P.Cardinality() != 8 {
-		t.Errorf("Expecting a cardinality of %d instead got %d", 8, P.Cardinality())
+		t.Errorf("Expecting a cardinality of %d instead got %f", 8, P.Cardinality())
 	}
 }
-
-func Test_Map(t *testing.T) {
-	A := NewSet(1, 2, 3, 4)
-	f := func(x interface{}) interface{} {
-		return x.(int) + A.Cardinality()
-	}
-	B := A.Map(f)
-	for e := range A.E {
-		if !B.Contains((f(e))) {
-			t.Error("The mapping function has not correctly mapped elements")
-		}
-	}
-}
-
-// A={1,2}
-// B={3,4}
-// A×B={(1,3),(2,3),(1,4),(2,4)}
-// B×A={(3,1),(3,2),(4,1),(4,2)}
 
 func Test_CartesianProduct(t *testing.T) {
 	A := NewSet(1, 2)
-	B := NewSet(3, 4)
-	C := A.CartesianProduct(B)
+	B := NewSet(3, 4, 5, 6)
+	C := CartesianProduct(A, B)
+	if C.Cardinality() != (A.Cardinality() * B.Cardinality()) {
+		t.Errorf("Expecting a cardinality of %f instead got %f", A.Cardinality()*B.Cardinality(), C.Cardinality())
+	}
+}
+
+func Test_DisjointUnion(t *testing.T) {
+	A := NewSet(1, 2)
+	B := NewSet(3, 4, 5, 6)
+	C := DisjointUnion(A, B)
 	fmt.Println(C.String())
 }

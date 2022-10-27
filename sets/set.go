@@ -8,6 +8,17 @@ import (
 	"sync"
 )
 
+// Tuple represents an ordered pair
+type Tuple struct {
+	a, b interface{}
+}
+
+// String returns a string representation of a tuple
+func (t *Tuple) String() (s string) {
+	s = fmt.Sprintf("(%v,%v)", t.a, t.b)
+	return
+}
+
 type nothing struct{}
 
 type elements map[interface{}]nothing
@@ -18,16 +29,6 @@ type elements map[interface{}]nothing
 type Set struct {
 	E     elements
 	rLock sync.Mutex
-}
-
-type Tuple struct {
-	a, b interface{}
-}
-
-// String returns a string representation of a tuple
-func (t *Tuple) String() (s string) {
-	s = fmt.Sprintf("(%v,%v)", t.a, t.b)
-	return
 }
 
 func new() (A Set) {
@@ -75,7 +76,7 @@ func (A *Set) Remove(els ...interface{}) {
 
 // SetToSlice converts a set to a slice.
 func (A *Set) SetToSlice() []interface{} {
-	ss := make([]interface{}, 0)
+	ss := make([]interface{}, 0, len(A.E))
 	for el := range A.E {
 		ss = append(ss, el)
 	}
@@ -84,11 +85,11 @@ func (A *Set) SetToSlice() []interface{} {
 
 // String returns a string representation of Set
 func (A *Set) String() (s string) {
-	elements := make([]string, 0)
-	for el := range A.E {
-		elements = append(elements, fmt.Sprintf("%v", el))
+	els := make([]string, 0)
+	for e := range A.E {
+		els = append(els, fmt.Sprintf("%v", e))
 	}
-	s = fmt.Sprintf("{%v}", strings.Join(elements, ", "))
+	s = fmt.Sprintf("{%v}", strings.Join(els, ", "))
 	return
 }
 
@@ -112,10 +113,10 @@ func (A *Set) Contains(els ...interface{}) bool {
 // ∣S∣	cardinality	used to describe the size of a set (refers to the number of unique elements if A is finite)
 // S={1,2,2,2,3,4,5,5}
 // ∣S∣=5
-func (A *Set) Cardinality() int {
+func (A *Set) Cardinality() float64 {
 	A.rLock.Lock()
 	defer A.rLock.Unlock()
-	return len(A.E)
+	return float64(len(A.E))
 }
 
 // Subset returns a new set (C) that is the subset of A & B.
@@ -149,10 +150,7 @@ func (A *Set) IsEqual(B *Set) bool {
 }
 
 func Equals(A, B *Set) bool {
-	if !A.IsEquivalent(B) {
-		return false
-	}
-	return A.IsSubset(B)
+	return A.IsEquivalent(B) && A.IsSubset(B)
 }
 
 // IsSubset checks if A is a subset of B.
@@ -278,18 +276,7 @@ func Difference(A, B *Set) (C *Set) {
 
 // SymetricDifferencec creates a new set (C) from elements in A only AND elements in B only
 func SymetricDifferencec(A, B *Set) (C *Set) {
-	C = NewSet()
-	//TODO add go routines to do both in parallel
-	for e := range A.E {
-		if !B.Contains(e) {
-			C.Add(e)
-		}
-	}
-	for e := range B.E {
-		if !A.Contains(e) {
-			C.Add(e)
-		}
-	}
+	C = Difference(A, B).Union(Difference(B, A))
 	return
 }
 
@@ -300,11 +287,8 @@ func SymetricDifferencec(A, B *Set) (C *Set) {
 // B={2,1,4,3,5}
 // A⊆B
 func Subset(A, B *Set) (C Set) {
-	l := A.Cardinality()
-	if l < B.Cardinality() {
-		l = B.Cardinality()
-	}
-	C.E = make(elements, l)
+	l := math.Max(A.Cardinality(), B.Cardinality())
+	C.E = make(elements, int(l))
 	for e := range A.E {
 		if B.Contains(e) {
 			C.Add(e)
@@ -325,24 +309,15 @@ func Complement(A *Set, U ...*Set) *Set {
 	return Difference(A, universe)
 }
 
-// MappingFunction
-func (A *Set) Map(f func(x interface{}) interface{}) (B *Set) {
-	B = NewSet()
-	for e := range A.E {
-		B.Add(f(e))
-	}
-	return
-}
-
 // Powerset
 // Power set is the set of all subsets that a set could contain. Example: Set A = {1,2,3}. Power set of A is = {{∅}, {1}, {2}, {3}, {1,2}, {2,3}, {1,3}, {1,2,3}}.
 func (A *Set) Powerset() (B *Set) {
 	ASlice := A.SetToSlice()
 	B = NewSet()
-	for counter := 0; counter < A.PowersetCardinality(); counter++ {
+	for i := 0; i < A.PowersetCardinality(); i++ {
 		S := NewSet()
 		for j := 0; j < len(ASlice); j++ {
-			if (counter & (1 << j)) > 0 {
+			if (i & (1 << j)) > 0 {
 				S.Add(ASlice[j])
 			}
 		}
@@ -364,15 +339,24 @@ func (A *Set) PowersetCardinality() int {
 // B={3,4}
 // A×B={(1,3),(2,3),(1,4),(2,4)}
 // B×A={(3,1),(3,2),(4,1),(4,2)}
-func (A *Set) CartesianProduct(B *Set) (C *Set) {
+func CartesianProduct(A, B *Set) (C *Set) {
 	C = NewSet()
-	for el := range A.E {
-		for el2 := range B.E {
-			comb := Tuple{el, el2}
+	for e := range A.E {
+		for e2 := range B.E {
+			comb := Tuple{e, e2}
 			C.Add(comb)
 		}
 	}
 	return
 }
 
-// Disjoint Union
+// DisjointUnion
+func DisjointUnion(sets ...*Set) (C *Set) {
+	C = NewSet()
+	for i := range sets {
+		for e := range sets[i].E {
+			C.Add(Tuple{e, i})
+		}
+	}
+	return
+}
