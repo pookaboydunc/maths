@@ -20,8 +20,8 @@ func JaccardDistance(A, B *Set) float64 {
 }
 
 // DSC
-// Dice Similarity Coefficient
-// The Sorensen Coefficient equals twice the number of elements common to both sets divided by the sum of the number of elements in each set.
+// Dice Similarity Coefficient / The Sorensen Coefficient
+// DSC equals twice the number of elements common to both sets divided by the sum of the number of elements in each set.
 func DSC(A, B *Set) float64 {
 	commonElements := A.Intersect(B).Cardinality()
 	sumOfElements := A.Cardinality() + B.Cardinality()
