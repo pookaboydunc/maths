@@ -146,14 +146,6 @@ func Test_Union(t *testing.T) {
 			}
 		}
 	}
-	X := NewSet(1, 1, 2, 3, 4, 5)
-	Y := NewSet(1, 2)
-	Z := NewSet(3, 4, 5, 6)
-	op1 := X.Union(Y.Union(Z))
-	op2 := X.Union(Y).Union(Z)
-	if op1.Cardinality() != op2.Cardinality() {
-		t.Error("Set union operations do not appear to be associative")
-	}
 }
 
 func Test_CommutativeUnion(t *testing.T) {
@@ -178,6 +170,18 @@ func Test_CommutativeUnion(t *testing.T) {
 
 	if !D.IsEqual(C) {
 		t.Errorf("Expected D (%v) to be the same as C (%v)", D, C)
+	}
+}
+
+// A∪(B∪C)=(A∪B)∪C
+func Test_AssociativityUnion(t *testing.T) {
+	X := NewSet(1, 1, 2, 3, 4, 5)
+	Y := NewSet(1, 2)
+	Z := NewSet(3, 4, 5, 6)
+	op1 := X.Union(Y.Union(Z))
+	op2 := X.Union(Y).Union(Z)
+	if op1.Cardinality() != op2.Cardinality() {
+		t.Error("Set union operations do not appear to be associative")
 	}
 }
 
@@ -293,6 +297,31 @@ func Test_Intersect(t *testing.T) {
 	}
 }
 
+// A∩B=B∩A
+func Test_CommutativeIntersect(t *testing.T) {
+	A := NewSet(1, 1, 2, 3, 4, 5)
+	if A.Cardinality() != 5 {
+		t.Errorf("A should have 5 elements. Instead it has a cardinality of %f", A.Cardinality())
+	}
+	A.Remove(1)
+	B := NewSet(1, 1, 2, 3, 4, 5)
+	C := A.Intersect(B)
+	if C.Cardinality() != 4 {
+		t.Errorf("C should have 4 elements. Instead it has a cardinality of %f", C.Cardinality())
+	}
+	for e := range C.E {
+		if !A.Contains(e) {
+			if !B.Contains(e) {
+				t.Errorf("C should contain element %v but it does not", e)
+			}
+		}
+	}
+	D := Intersect(B, A)
+
+	if !D.IsEqual(C) {
+		t.Errorf("Expected D (%v) to be the same as C (%v)", D, C)
+	}
+}
 func Test_Difference(t *testing.T) {
 	A := NewSet(2, "3")
 	A.Add(1, 2, "3")
