@@ -297,6 +297,19 @@ func Test_Intersect(t *testing.T) {
 	}
 }
 
+func Test_IsDisjoint(t *testing.T) {
+	A := NewSet(1, 2, "3")
+	B := NewSet("1", "2", "3", "4")
+	if A.IsDisjoint(B) {
+		t.Error(`Expecting A & B to not be disjoint`)
+	}
+	X := NewSet(1, 2)
+	Y := NewSet(3, 4, 5, 6)
+	if !X.IsDisjoint(Y) {
+		t.Error(`Expecting X & Y to be disjoint`)
+	}
+}
+
 // A∩B=B∩A
 func Test_CommutativeIntersect(t *testing.T) {
 	A := NewSet(1, 1, 2, 3, 4, 5)

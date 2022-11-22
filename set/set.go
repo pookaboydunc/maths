@@ -130,11 +130,15 @@ func (A *Set) Subset(B *Set) (C Set) {
 }
 
 /*
-	Comparison checks
+	Logic and Comparison
 */
 
 // IsDisjoint
+//
 // Two sets are disjoint sets if there are no common elements in both sets. Example: A = {1,2,3,4} B = {5,6,7,8}. Here, set A and set B are disjoint sets.
+func (A *Set) IsDisjoint(B *Set) bool {
+	return Intersect(A, B).Cardinality() == 0
+}
 
 // IsEquivalent checks if A & B have the same Cardinality.
 //
