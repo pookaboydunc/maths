@@ -27,8 +27,8 @@ type elements map[interface{}]nothing
 //
 // {}	set	used to define a set	S={1,2,3,4,…}
 type Set struct {
-	E     elements
-	rLock sync.Mutex
+	E elements
+	sync.Mutex
 }
 
 func new() (A Set) {
@@ -45,7 +45,7 @@ func NewSet(els ...interface{}) *Set {
 	return &A
 }
 
-// SuchThat
+// SuchThat returns a new set (A) containing all elements that meet the condition
 // :, ∣	such that	used to denote a condition, usually in set-builder notation or in a mathematical definition
 // {x2:x+3 is prime}
 func SuchThat(condition func(x interface{}) bool, els ...interface{}) (A *Set) {
@@ -67,8 +67,8 @@ func (A *Set) Add(els ...interface{}) {
 
 // Remove deletes one or more existing elements from A.
 func (A *Set) Remove(els ...interface{}) {
-	A.rLock.Lock()
-	defer A.rLock.Unlock()
+	A.Lock()
+	defer A.Unlock()
 	for _, e := range els {
 		delete(A.E, e)
 	}
@@ -98,8 +98,8 @@ func (A *Set) String() (s string) {
 // ∈	in, element of	used to denote that an element is part of a set	1∈1,2,3
 // ∉	not in, not an element of	used to denote than an element is not part of a set	4∉1,2,3
 func (A *Set) Contains(els ...interface{}) bool {
-	A.rLock.Lock()
-	defer A.rLock.Unlock()
+	A.Lock()
+	defer A.Unlock()
 	for _, e := range els {
 		if _, ok := A.E[e]; !ok {
 			return false
@@ -114,8 +114,8 @@ func (A *Set) Contains(els ...interface{}) bool {
 // S={1,2,2,2,3,4,5,5}
 // ∣S∣=5
 func (A *Set) Cardinality() float64 {
-	A.rLock.Lock()
-	defer A.rLock.Unlock()
+	A.Lock()
+	defer A.Unlock()
 	return float64(len(A.E))
 }
 
