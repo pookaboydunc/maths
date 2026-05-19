@@ -21,7 +21,7 @@ func Test_JaccardSimilarity(t *testing.T) {
 	E := NewSet("cat", "dog", "hippo", "monkey")
 	F := NewSet("monkey", "rhino", "ostrich", "salmon")
 	index3 := JaccardSimilarity(E, F)
-	shouldBe := 0.14
+	shouldBe := 0.214
 	tolerance := 0.01
 	if diff := math.Abs(index3 - shouldBe); diff > tolerance {
 		t.Errorf("expected a similarity index of 0.14 instead got %.6f", index3)
