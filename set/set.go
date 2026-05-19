@@ -10,7 +10,7 @@ import (
 
 // Tuple represents an ordered pair
 type Tuple struct {
-	a, b interface{}
+	a, b any
 }
 
 // String returns a string representation of a tuple
@@ -21,7 +21,7 @@ func (t *Tuple) String() (s string) {
 
 type nothing struct{}
 
-type elements map[interface{}]nothing
+type elements map[any]nothing
 
 // Set is the main structure used to denote a set.
 //
@@ -36,7 +36,7 @@ func new() (A Set) {
 }
 
 // NewSet returns a new set (A) of all unique elements passed into the function call.
-func NewSet(els ...interface{}) *Set {
+func NewSet(els ...any) *Set {
 	A := new()
 	A.E = make(elements, len(els))
 	for _, e := range els {
@@ -48,7 +48,7 @@ func NewSet(els ...interface{}) *Set {
 // SuchThat returns a new set (A) containing all elements that meet the condition
 // :, ∣	such that	used to denote a condition, usually in set-builder notation or in a mathematical definition
 // {x2:x+3 is prime}
-func SuchThat(condition func(x interface{}) bool, els ...interface{}) (A *Set) {
+func SuchThat(condition func(x any) bool, els ...any) (A *Set) {
 	A = NewSet()
 	for e := range els {
 		if condition(e) {
@@ -59,14 +59,14 @@ func SuchThat(condition func(x interface{}) bool, els ...interface{}) (A *Set) {
 }
 
 // Add inserts one or more elements into A.
-func (A *Set) Add(els ...interface{}) {
+func (A *Set) Add(els ...any) {
 	for _, e := range els {
 		A.E[e] = nothing{}
 	}
 }
 
 // Remove deletes one or more existing elements from A.
-func (A *Set) Remove(els ...interface{}) {
+func (A *Set) Remove(els ...any) {
 	A.Lock()
 	defer A.Unlock()
 	for _, e := range els {
@@ -75,8 +75,8 @@ func (A *Set) Remove(els ...interface{}) {
 }
 
 // SetToSlice converts a set to a slice.
-func (A *Set) SetToSlice() []interface{} {
-	ss := make([]interface{}, 0, len(A.E))
+func (A *Set) SetToSlice() []any {
+	ss := make([]any, 0, len(A.E))
 	for el := range A.E {
 		ss = append(ss, el)
 	}
@@ -97,7 +97,7 @@ func (A *Set) String() (s string) {
 //
 // ∈	in, element of	used to denote that an element is part of a set	1∈1,2,3
 // ∉	not in, not an element of	used to denote than an element is not part of a set	4∉1,2,3
-func (A *Set) Contains(els ...interface{}) bool {
+func (A *Set) Contains(els ...any) bool {
 	A.Lock()
 	defer A.Unlock()
 	for _, e := range els {
@@ -320,7 +320,7 @@ func (A *Set) Powerset() (B *Set) {
 	B = NewSet()
 	for i := 0; i < A.PowersetCardinality(); i++ {
 		S := NewSet()
-		for j := 0; j < len(ASlice); j++ {
+		for j := range ASlice {
 			if (i & (1 << j)) > 0 {
 				S.Add(ASlice[j])
 			}
